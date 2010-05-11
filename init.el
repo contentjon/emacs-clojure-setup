@@ -254,35 +254,13 @@
      (expand-file-name "~/.emacs.d/elpa/package.el"))
   (package-initialize))
 
-
-;;;;;;;;;;;
-;; CEDET ;;
-;;;;;;;;;;;
-
-(defun load-rudel ()
-  (interactive)
-  ;; Do these in a shell in ~/src:
-  ;; cvs -d:pserver:anonymous@cedet.cvs.sourceforge.net:/cvsroot/cedet login
-  ;; cvs -z3 -d:pserver:anonymous@cedet.cvs.sourceforge.net:/cvsroot/cedet co -P cedet
-  ;; cd cedet && make && cd ..
-  ;; svn co https://rudel.svn.sourceforge.net/svnroot/rudel/rudel/trunk rudel
-  (add-to-list 'load-path "~/.emacs.d/cedet-1.0pre7/eieio")
-  (add-to-list 'load-path "~/.emacs.d/cedet-1.0pre7/common")
-  (add-to-list 'load-path "~/.emacs.d/rudel-0.2-4/")
-  (add-to-list 'load-path "~/.emacs.d/rudel-0.2-4/jupiter")
-  (add-to-list 'load-path "~/.emacs.d/rudel-0.2-4/obby")
-  (require 'rudel-mode)
-  (require 'rudel-obby)
-  (global-rudel-minor-mode))
-
-
 ;;;;;;;;;;;;;;;;
 ;; Organizing ;;
 ;;;;;;;;;;;;;;;;
 
 (split-window-horizontally)
-(find-file "~/TODO")
-(find-file-other-window "~/CALENDER")
+(find-file "~/orga/TODO")
+(find-file-other-window "~/orga/scratch")
 
 ;;;;;;;;;;;;
 ;; Server ;;
