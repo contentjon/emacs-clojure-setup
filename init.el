@@ -31,10 +31,6 @@
 ;; Desktop Projects ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(defun magicl ()
-  (interactive)
-  (desktop-change-dir "~/magicl"))
-
 (defun pandanet ()
   (interactive)
   (desktop-change-dir "~/pandanet"))
@@ -43,17 +39,32 @@
   (interactive)
   (desktop-change-dir "~/dev/goni"))
 
-(defun clj-go ()
+(defun go ()
   (interactive)
-  (desktop-change-dir "~/dev/clj-go"))
+  (desktop-change-dir "~/dev/clj-go")
+  (elein-swank))
 
-(defun clj-gen ()
+(defun gen ()
   (interactive)
   (desktop-change-dir "~/dev/clj-gen"))
 
 (defun contenjon ()
   (interactive)
   (desktop-change-dir "~/dev/contenjon"))
+
+(defun betfair ()
+  (interactive)
+  (desktop-change-dir "~/dev/bet"))
+
+(defun sandbox ()
+  (interactive)
+  (desktop-change-dir "~/dev/sandbox")
+  (elein-swank))
+
+(defun bet ()
+  (interactive)
+  (desktop-change-dir "~/dev/bet")
+  (elein-swank))
 
 ;;;;;;;;;;;;;;
 ;; cua-mode ;;
@@ -148,7 +159,7 @@
 (global-set-key [f5]   (lambda()(interactive)(compile "cd ~/magicl;mage")))
 (global-set-key [f6]   (lambda()(interactive)(shell-command "mage doc")))
 
-(global-set-key [f8]   (lambda()(interactive)(find-file "~/.emacs")))
+(global-set-key [f8]   (lambda()(interactive)(find-file "~/.emacs.d/init.el")))
 (global-set-key [f9]   'start-kbd-macro)
 (global-set-key [f10]  'end-kbd-macro)
 (global-set-key [f11]  'call-last-kbd-macro)
@@ -185,13 +196,26 @@
 (global-set-key (kbd "M-#") "~")
 (global-set-key (kbd "M-+") "@")
 
-;; (setq swank-clojure-classpath
-;;       (list "~/dev/clojure/clojure-slim-1.2.0-master-SNAPSHOT.jar"
-;;             "~/dev/clojure-contrib/target/clojure-contrib-1.2.0-SNAPSHOT.jar"
-;;             "~/dev/swank-clojure/swank-clojure.jar"))
+(setq swank-clojure-classpath
+      (list "~/.m2/repository/org/clojure/clojure/1.2.0/clojure-1.2.0.jar"
+            "~/.m2/repository/org/clojure/clojure-contrib/1.2.0/clojure-contrib-1.2.0.jar"
+            "~/.m2/repository/swank-clojure/swank-clojure/1.3.0-SNAPSHOT/swank-clojure-1.3.0-SNAPSHOT.jar"))
 
-(add-to-list 'load-path "~/.emacs.d/elpa/clojure-mode-1.6")
+(setq swank-clojure-init-files '("/Users/ben/.emacs.d/clojure-init.clj"))
+
+(add-to-list 'load-path "~/.emacs.d/elpa/clojure-mode-1.7.1")
 (require 'clojure-mode)
+
+(eval-after-load 'clojure-mode
+  '(define-clojure-indent
+     (describe 'defun)
+     (testing 'defun)
+     (given 'defun)
+     (using 'defun)
+     (with 'defun)
+     (it 'defun)
+     (do-it 'defun)
+     (def 'defun)))
 
 ;;;;;;;;;;;;;
 ;; Paredit ;;
@@ -209,6 +233,8 @@
 (add-hook 'lisp-mode-hook             (lambda () (paredit-mode +1)))
 (add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode +1)))
 (add-hook 'clojure-mode-hook          (lambda () (paredit-mode +1)))
+
+(require 'elein)
 
 ;;;;;;;;;;;;
 ;; AucTex ;;
@@ -258,9 +284,7 @@
 ;; Organizing ;;
 ;;;;;;;;;;;;;;;;
 
-(split-window-horizontally)
-(find-file "~/orga/TODO")
-(find-file-other-window "~/orga/scratch")
+(find-file "~/orga/scratch")
 
 ;;;;;;;;;;;;
 ;; Server ;;
