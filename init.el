@@ -3,7 +3,6 @@
 ;;;;;;;;;;;;;;;;;;
 
 (setq inhibit-splash-screen t)
-(add-to-list 'load-path "~/.emacs.d/")
 (push '("." . "~/.emacs-backups") backup-directory-alist)
 (desktop-save-mode 1)
 (setq kill-whole-line t)
@@ -96,11 +95,11 @@
 ;(tool-bar-mode -1)
 ;(menu-bar-mode -1)
 (set-scroll-bar-mode 'right)
-;(set-default-font "Monospace-9")
-(set-default-font "Monospace-12")
+(set-default-font "Monospace-11")
+;; (set-default-font "Monospace-12")
 
 (set-frame-position (selected-frame) 0 0)
-(let ((max-size '(170 . 88)))
+(let ((max-size '(170 . 57)))
   (set-frame-size (selected-frame) (car max-size) (cdr max-size)))
 
 (add-to-list 'load-path "~/.emacs.d/")
@@ -175,19 +174,6 @@
 (key-chord-define-global "öä" 'clojure-string->keyword)
 (global-set-key [(C f8)] 'dotemacs-header)
 
-;; Mac Keys
-(global-set-key (kbd "M-5") "[")
-(global-set-key (kbd "M-6") "]")
-(global-set-key (kbd "M-7") "|")
-(global-set-key (kbd "M-/") "\\")
-(global-set-key (kbd "C-M-7") "\\")
-
-(global-set-key (kbd "M-8") "{")
-(global-set-key (kbd "M-9") "}")
-
-(global-set-key (kbd "M-#") "~")
-(global-set-key (kbd "M-+") "@")
-
 ;; (setq swank-clojure-classpath
 ;;       (list "~/.m2/repository/org/clojure/clojure/1.3.0-alpha4/clojure-1.3.0-alpha4.jar"
 ;;             "~/.m2/repository/org/clojure/contrib/standalone/1.3.0-alpha4/clojure-contrib-1.3.0-alpha4.jar"
@@ -239,7 +225,7 @@
 
 ;; (require 'elein)
 
-;; (custom-set-variables '(slime-net-coding-system (quote utf-8-unix)))
+(custom-set-variables '(slime-net-coding-system (quote utf-8-unix)))
 
 ;;;;;;;;;;;;;;;;
 ;; Processing ;;
@@ -292,26 +278,6 @@
   (goto-char (- (search-forward "\"")
                 1))
   (delete-char 1))
-
-;;;;;;;;;;
-;; ELPA ;;
-;;;;;;;;;;
-
-(when
-    (load
-     (expand-file-name "~/.emacs.d/elpa/package.el"))
-  (package-initialize))
-
-(add-to-list 'package-archives
-             '("marmalade"
-               .
-               "http://marmalade-repo.org/packages/"))
-
-;;;;;;;;;;;;;;;;
-;; Organizing ;;
-;;;;;;;;;;;;;;;;
-
-(find-file "~/orga/scratch")
 
 ;;;;;;;;;;;;
 ;; Server ;;
