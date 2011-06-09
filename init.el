@@ -11,6 +11,7 @@
 ;(setq-default transient-mark-mode t)
 (setq show-trailing-whitespace t)
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 (setq-default fill-column 72)
 (setq-default indent-tabs-mode nil)
 
@@ -31,40 +32,37 @@
 ;; Desktop Projects ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(defun pandanet ()
-  (interactive)
-  (desktop-change-dir "~/pandanet"))
+(defun project (dir)
+  (desktop-change-dir dir)
+  (cd dir))
 
-(defun goni ()
+(defun libs ()
   (interactive)
-  (desktop-change-dir "~/dev/goni"))
+  (project "~/dev/libs"))
+
+(defun panda ()
+  (interactive)
+  (project "~/dev/gopanda"))
 
 (defun go ()
   (interactive)
-  (desktop-change-dir "~/dev/clj-go")
-  (elein-swank))
+  (project "~/dev/gostrategy"))
 
 (defun gen ()
   (interactive)
-  (desktop-change-dir "~/dev/clj-gen"))
+  (project "~/dev/clj-gen"))
 
 (defun contenjon ()
   (interactive)
-  (desktop-change-dir "~/dev/contenjon"))
-
-(defun betfair ()
-  (interactive)
-  (desktop-change-dir "~/dev/bet"))
+  (project "~/dev/contenjon"))
 
 (defun sandbox ()
   (interactive)
-  (desktop-change-dir "~/dev/sandbox")
-  (elein-swank))
+  (project "~/dev/sandbox"))
 
 (defun bet ()
   (interactive)
-  (desktop-change-dir "~/dev/bet")
-  (elein-swank))
+  (project "~/dev/bet"))
 
 ;;;;;;;;;;;;;;
 ;; cua-mode ;;
@@ -99,19 +97,17 @@
 ;(menu-bar-mode -1)
 (set-scroll-bar-mode 'right)
 ;(set-default-font "Monospace-9")
-(set-default-font "Monospace-11")
+(set-default-font "Monospace-12")
 
 (set-frame-position (selected-frame) 0 0)
-(let ((max-size (cond
-                 ((eql window-system 'ns) '(200 . 77))
-                 ((eql window-system 'x)  '(200 . 77)))))
+(let ((max-size '(170 . 88)))
   (set-frame-size (selected-frame) (car max-size) (cdr max-size)))
 
 (add-to-list 'load-path "~/.emacs.d/")
 (add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0")
 (require 'color-theme)
 (load "color-theme-blue")(color-theme-blue)
-(load "color-theme-dark-bliss") ;(color-theme-dark-bliss)
+;; (load "color-theme-dark-bliss")(color-theme-dark-bliss)
 ;; (load "color-theme-twilight")(color-theme-twilight)
 ;; (load "color-theme-sunburst")(color-theme-tm)
 
@@ -150,14 +146,9 @@
 (global-set-key (kbd "C--") 'text-scale-adjust)
 (global-set-key (kbd "C-0") 'text-scale-adjust)
 
-(global-set-key (kbd "C-c i") (lambda()(interactive)(insert "\\icode{")))
-(global-set-key (kbd "C-c s") (lambda()(interactive)(insert "\\sexp{}")))
-(global-set-key (kbd "C-c S") (lambda()(interactive)(insert "\\sexps{}")))
-
 (global-set-key [f2] 'fullscreen)
 
-(global-set-key [f5]   (lambda()(interactive)(compile "cd ~/magicl;mage")))
-(global-set-key [f6]   (lambda()(interactive)(shell-command "mage doc")))
+(global-set-key [f5]   (lambda()(interactive)(slime-connect "127.0.0.1" 4005)))
 
 (global-set-key [f8]   (lambda()(interactive)(find-file "~/.emacs.d/init.el")))
 (global-set-key [f9]   'start-kbd-macro)
@@ -181,6 +172,7 @@
 (key-chord-define-global "<y" 'previous-buffer)
 (key-chord-define-global "<x" 'next-buffer)
 (key-chord-define-global "89" 'clojure-mode)
+(key-chord-define-global "öä" 'clojure-string->keyword)
 (global-set-key [(C f8)] 'dotemacs-header)
 
 ;; Mac Keys
@@ -196,26 +188,37 @@
 (global-set-key (kbd "M-#") "~")
 (global-set-key (kbd "M-+") "@")
 
-(setq swank-clojure-classpath
-      (list "~/.m2/repository/org/clojure/clojure/1.2.0/clojure-1.2.0.jar"
-            "~/.m2/repository/org/clojure/clojure-contrib/1.2.0/clojure-contrib-1.2.0.jar"
-            "~/.m2/repository/swank-clojure/swank-clojure/1.3.0-SNAPSHOT/swank-clojure-1.3.0-SNAPSHOT.jar"))
+;; (setq swank-clojure-classpath
+;;       (list "~/.m2/repository/org/clojure/clojure/1.3.0-alpha4/clojure-1.3.0-alpha4.jar"
+;;             "~/.m2/repository/org/clojure/contrib/standalone/1.3.0-alpha4/clojure-contrib-1.3.0-alpha4.jar"
+;;             "~/.m2/repository/swank-clojure/swank-clojure/1.3.0-SNAPSHOT/swank-clojure-1.3.0-SNAPSHOT.jar")
+;;       ;; (list "~/.m2/repository/org/clojure/clojure/1.2.0/clojure-1.2.0.jar"
+;;       ;;       "~/.m2/repository/org/clojure/clojure-contrib/1.2.0/clojure-contrib-1.2.0.jar"
+;;       ;;       "~/.m2/repository/swank-clojure/swank-clojure/1.3.0-SNAPSHOT/swank-clojure-1.3.0-SNAPSHOT.jar")
+;; )
 
-(setq swank-clojure-init-files '("/Users/ben/.emacs.d/clojure-init.clj"))
+;; (setq swank-clojure-init-files '("/Users/ben/.emacs.d/clojure-init.clj"))
 
-(add-to-list 'load-path "~/.emacs.d/elpa/clojure-mode-1.7.1")
-(require 'clojure-mode)
+;; (add-to-list 'load-path "~/.emacs.d/elpa/clojure-mode-1.7.1")
+;; (require 'clojure-mode)
 
-(eval-after-load 'clojure-mode
-  '(define-clojure-indent
-     (describe 'defun)
-     (testing 'defun)
-     (given 'defun)
-     (using 'defun)
-     (with 'defun)
-     (it 'defun)
-     (do-it 'defun)
-     (def 'defun)))
+;; (eval-after-load 'clojure-mode
+;;   '(define-clojure-indent
+;;      (describe 'defun)
+;;      (testing 'defun)
+;;      (given 'defun)
+;;      (using 'defun)
+;;      (with 'defun)
+;;      (it 'defun)
+;;      (do-it 'defun)
+;;      (def 'defun)
+;;      (add-parser 'defun)
+;;      (p/let 'defun)
+;;      (bind 'defun)
+;;      (where 'defun)
+;;      (with 'defin)))
+
+(require 'align-cljlet)
 
 ;;;;;;;;;;;;;
 ;; Paredit ;;
@@ -234,7 +237,17 @@
 (add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode +1)))
 (add-hook 'clojure-mode-hook          (lambda () (paredit-mode +1)))
 
-(require 'elein)
+;; (require 'elein)
+
+;; (custom-set-variables '(slime-net-coding-system (quote utf-8-unix)))
+
+;;;;;;;;;;;;;;;;
+;; Processing ;;
+;;;;;;;;;;;;;;;;
+
+;; (autoload 'processing-mode "processing-mode" "Processing mode" t)
+;; (add-to-list 'auto-mode-alist '("\\.pde$" . processing-mode))
+;; (setq processing-location "/Applications/Processing.app/")
 
 ;;;;;;;;;;;;
 ;; AucTex ;;
@@ -271,6 +284,15 @@
              text-line "\n"
              comment-line "\n\n"))))
 
+(defun clojure-string->keyword ()
+  (interactive)
+  (goto-char (search-backward "\""))
+  (delete-char 1)
+  (insert ":")
+  (goto-char (- (search-forward "\"")
+                1))
+  (delete-char 1))
+
 ;;;;;;;;;;
 ;; ELPA ;;
 ;;;;;;;;;;
@@ -279,6 +301,11 @@
     (load
      (expand-file-name "~/.emacs.d/elpa/package.el"))
   (package-initialize))
+
+(add-to-list 'package-archives
+             '("marmalade"
+               .
+               "http://marmalade-repo.org/packages/"))
 
 ;;;;;;;;;;;;;;;;
 ;; Organizing ;;
