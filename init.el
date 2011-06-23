@@ -2,6 +2,12 @@
 ;; Global Stuff ;;
 ;;;;;;;;;;;;;;;;;;
 
+(setq conf-dir (concat
+                ;; expanded for stuff like java class path
+                (expand-file-name user-emacs-directory)
+                user-login-name
+                "/"))
+
 (setq inhibit-splash-screen t)
 (push '("." . "~/.emacs-backups") backup-directory-alist)
 (desktop-save-mode 1)
@@ -27,33 +33,37 @@
       query-replace-highlight t)
 (setq x-select-enable-clipboard t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;
+;; starter-kit-cleanup ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(remove-hook 'coding-hook 'turn-on-idle-highlight)
+(remove-hook 'coding-hook 'turn-on-hl-line-mode)
+(setq ring-bell-function 'ignore)
+
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; Desktop Projects ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(defun project (dir)
-  (desktop-change-dir dir)
-  (cd dir))
+;; defines development-dir
+(load "local-settings")
+
+(defun project (name)
+  (let ((dir (concat development-dir "/" name)) )
+    (desktop-change-dir dir)
+    (cd dir)))
 
 (defun libs ()
   (interactive)
-  (project "~/dev/libs"))
+  (project "libs"))
 
 (defun panda ()
   (interactive)
-  (project "~/dev/gopanda"))
+  (project "gopanda"))
 
 (defun go ()
   (interactive)
-  (project "~/dev/gostrategy"))
-
-(defun gen ()
-  (interactive)
-  (project "~/dev/clj-gen"))
-
-(defun contenjon ()
-  (interactive)
-  (project "~/dev/contenjon"))
+  (project "gostrategy"))
 
 (defun sandbox ()
   (interactive)
@@ -147,7 +157,7 @@
 
 (global-set-key [f5]   (lambda()(interactive)(slime-connect "127.0.0.1" 4005)))
 
-(global-set-key [f8]   (lambda()(interactive)(find-file "~/.emacs.d/ben/init.el")))
+(global-set-key [f8]   (lambda()(interactive)(find-file (concat conf-dir "init.el"))))
 (global-set-key [f9]   'start-kbd-macro)
 (global-set-key [f10]  'end-kbd-macro)
 (global-set-key [f11]  'call-last-kbd-macro)
@@ -168,13 +178,11 @@
 (key-chord-define-global ",." 'comment-or-uncomment-region)
 (key-chord-define-global "<y" 'previous-buffer)
 (key-chord-define-global "<x" 'next-buffer)
-(key-chord-define-global "89" 'clojure-mode)
+(key-chord-define-global "89" 'align-cljlet)
 (key-chord-define-global "öä" 'clojure-string->keyword)
 (global-set-key [(C f8)] 'dotemacs-header)
 
-;; (setq swank-clojure-init-files '("/Users/ben/.emacs.d/clojure-init.clj"))
-
-(add-to-list 'load-path "~/.emacs.d/ben/midje")
+(add-to-list 'load-path (concat conf-dir "midje"))
 (require 'clojure-mode)
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
 (require 'midje-mode)
@@ -232,11 +240,7 @@
           (lambda ()
             (ispell-change-dictionary "deutsch")
             (setq TeX-open-quote "\"`")
-            (setq TeX-close-quote "\"'")
-            (local-set-key (kbd "C-c i") (lambda ()
-                                           (interactive)
-                                           (insert "\\icode{")))
-            ))
+            (setq TeX-close-quote "\"'")))
 
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
