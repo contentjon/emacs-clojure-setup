@@ -99,12 +99,10 @@
 ;; (set-default-font "Monospace-12")
 
 (set-frame-position (selected-frame) 0 0)
-(let ((max-size '(170 . 57)))
+(let ((max-size '(170 . 52)))
   (set-frame-size (selected-frame) (car max-size) (cdr max-size)))
 
-(add-to-list 'load-path "~/.emacs.d/")
-(add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0")
-(require 'color-theme)
+;; (require 'color-theme)
 (load "color-theme-blue")(color-theme-blue)
 ;; (load "color-theme-dark-bliss")(color-theme-dark-bliss)
 ;; (load "color-theme-twilight")(color-theme-twilight)
@@ -149,7 +147,7 @@
 
 (global-set-key [f5]   (lambda()(interactive)(slime-connect "127.0.0.1" 4005)))
 
-(global-set-key [f8]   (lambda()(interactive)(find-file "~/.emacs.d/init.el")))
+(global-set-key [f8]   (lambda()(interactive)(find-file "~/.emacs.d/ben/init.el")))
 (global-set-key [f9]   'start-kbd-macro)
 (global-set-key [f10]  'end-kbd-macro)
 (global-set-key [f11]  'call-last-kbd-macro)
@@ -174,35 +172,30 @@
 (key-chord-define-global "öä" 'clojure-string->keyword)
 (global-set-key [(C f8)] 'dotemacs-header)
 
-;; (setq swank-clojure-classpath
-;;       (list "~/.m2/repository/org/clojure/clojure/1.3.0-alpha4/clojure-1.3.0-alpha4.jar"
-;;             "~/.m2/repository/org/clojure/contrib/standalone/1.3.0-alpha4/clojure-contrib-1.3.0-alpha4.jar"
-;;             "~/.m2/repository/swank-clojure/swank-clojure/1.3.0-SNAPSHOT/swank-clojure-1.3.0-SNAPSHOT.jar")
-;;       ;; (list "~/.m2/repository/org/clojure/clojure/1.2.0/clojure-1.2.0.jar"
-;;       ;;       "~/.m2/repository/org/clojure/clojure-contrib/1.2.0/clojure-contrib-1.2.0.jar"
-;;       ;;       "~/.m2/repository/swank-clojure/swank-clojure/1.3.0-SNAPSHOT/swank-clojure-1.3.0-SNAPSHOT.jar")
-;; )
-
 ;; (setq swank-clojure-init-files '("/Users/ben/.emacs.d/clojure-init.clj"))
 
-;; (add-to-list 'load-path "~/.emacs.d/elpa/clojure-mode-1.7.1")
-;; (require 'clojure-mode)
+(add-to-list 'load-path "~/.emacs.d/ben/midje")
+(require 'clojure-mode)
+(add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
+(require 'midje-mode)
+(add-hook 'clojure-mode-hook 'midje-mode)
 
-;; (eval-after-load 'clojure-mode
-;;   '(define-clojure-indent
-;;      (describe 'defun)
-;;      (testing 'defun)
-;;      (given 'defun)
-;;      (using 'defun)
-;;      (with 'defun)
-;;      (it 'defun)
-;;      (do-it 'defun)
-;;      (def 'defun)
-;;      (add-parser 'defun)
-;;      (p/let 'defun)
-;;      (bind 'defun)
-;;      (where 'defun)
-;;      (with 'defin)))
+(eval-after-load 'clojure-mode
+  '(define-clojure-indent
+     (describe 'defun)
+     (testing 'defun)
+     (given 'defun)
+     (using 'defun)
+     (with 'defun)
+     (it 'defun)
+     (do-it 'defun)
+     (def 'defun)
+     (add-parser 'defun)
+     (p/let 'defun)
+     (register-hook 'defun)
+     (bind 'defun)
+     (where 'defun)
+     (with 'defin)))
 
 (require 'align-cljlet)
 
@@ -210,18 +203,14 @@
 ;; Paredit ;;
 ;;;;;;;;;;;;;
 
-(eval-after-load 'paredit
-  '(progn (define-key paredit-mode-map (kbd "{")
-            'paredit-open-brace)
-          (define-key paredit-mode-map (kbd "}")
-            'paredit-close-brace)))
-
 (autoload 'paredit-mode "paredit"
   "Minor mode for pseudo-structurally editing Lisp code." t)
 (add-hook 'emacs-lisp-mode-hook       (lambda () (paredit-mode +1)))
 (add-hook 'lisp-mode-hook             (lambda () (paredit-mode +1)))
 (add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode +1)))
 (add-hook 'clojure-mode-hook          (lambda () (paredit-mode +1)))
+(add-hook 'slime-repl-mode-hook       (lambda () (paredit-mode +1)))
+
 
 ;; (require 'elein)
 
