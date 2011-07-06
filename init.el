@@ -178,8 +178,7 @@
 (key-chord-define-global ",." 'comment-or-uncomment-region)
 (key-chord-define-global "<y" 'previous-buffer)
 (key-chord-define-global "<x" 'next-buffer)
-(key-chord-define-global "89" 'align-cljlet)
-(key-chord-define-global "öä" 'clojure-string->keyword)
+
 (global-set-key [(C f8)] 'dotemacs-header)
 
 (add-to-list 'load-path (concat conf-dir "midje"))
@@ -187,6 +186,11 @@
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
 (require 'midje-mode)
 (add-hook 'clojure-mode-hook 'midje-mode)
+
+(key-chord-define clojure-mode-map "89" 'align-cljlet)
+(key-chord-define clojure-mode-map "öä" 'clojure-string->keyword)
+(define-key clojure-mode-map (kbd "C-c t")    'clojure-goto-test-or-back)
+(define-key clojure-mode-map (kbd "C-c C-a")  'clojure-add-ns)
 
 (eval-after-load 'clojure-mode
   '(define-clojure-indent
@@ -265,6 +269,10 @@
              text-line "\n"
              comment-line "\n\n"))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Clojure Convenience Functions ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun clojure-string->keyword ()
   (interactive)
   (goto-char (search-backward "\""))
@@ -274,8 +282,62 @@
                 1))
   (delete-char 1))
 
-;;;;;;;;;;;;
-;; Server ;;
-;;;;;;;;;;;;
+(defun clojure-ns->file (ns)
+  (concat
+   (replace-in-string
+    (replace-in-string ns "[.]" "/")
+    "-" "_")
+   ".clj"))
 
-(server-start)
+(defun clojure-file->ns (file)
+  (replace-in-string
+   (replace-in-string
+    (replace-in-string file "/" ".")
+    "_" "-")
+   ".clj$" ""))
+
+(defun clojure-add-ns ()
+  (interactive)
+  (let* ((current-project (locate-dominating-file (buffer-file-name)
+                                                  "project.clj"))
+         (promt           (concat "Project (default " current-project "): "))
+         (target-project  (file-name-as-directory
+                           (read-directory-name
+                            promt
+                            (file-name-as-directory development-dir)
+                            current-project)))
+         (ns              (read-from-minibuffer "Namespace: "))
+         (file            (concat target-project
+                                  "src/"
+                                  (clojure-ns->file ns)))
+         (dir             (file-name-directory file)))
+    (if (file-exists-p file)
+        (find-file file)
+      (progn (make-directory dir t)
+             (find-file file)
+             (insert "(ns " ns ")\n\n")))))
+
+(defun clojure-goto-test-or-back ()
+  (interactive)
+  (let* ((current-file    (buffer-file-name))
+         (current-project (locate-dominating-file current-file
+                                                  "project.clj"))
+         (test-p          (string-match "/test/test/" current-file))
+         (rel-filename    (file-relative-name
+                           current-file
+                           (concat current-project
+                                   (if test-p "test/test/" "src/"))))
+         (outer-path      (concat current-project
+                                  (if test-p "src/" "test/test/")))
+         (target-file     (concat outer-path rel-filename)))
+    (if (or test-p
+            (file-exists-p target-file)
+            (find-buffer-visiting target-file))
+        (find-file target-file)
+      (let* ((ns  (clojure-file->ns rel-filename))
+             (dir (file-name-directory target-file)))
+        (progn (make-directory dir t)
+               (find-file target-file)
+               (insert "(ns test." ns
+                       "\n  (:use [" ns " :reload true]"
+                       "\n        (midje sweet)))\n\n"))))))
