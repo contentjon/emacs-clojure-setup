@@ -300,7 +300,9 @@
   (interactive)
   (let* ((current-project (locate-dominating-file (buffer-file-name)
                                                   "project.clj"))
-         (promt           (concat "Project (default " current-project "): "))
+         (promt           (if current-project
+                              (concat "Add ns to Project (default " current-project "): ")
+                            "Add ns to Project: "))
          (target-project  (file-name-as-directory
                            (read-directory-name
                             promt
