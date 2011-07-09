@@ -189,8 +189,8 @@
 
 (key-chord-define clojure-mode-map "89" 'align-cljlet)
 (key-chord-define clojure-mode-map "öä" 'clojure-string->keyword)
-(define-key clojure-mode-map (kbd "C-c t")    'clojure-goto-test-or-back)
-(define-key clojure-mode-map (kbd "C-c C-a")  'clojure-add-ns)
+(define-key clojure-mode-map (kbd "C-c t")      'clojure-goto-test-or-back)
+(define-key clojure-mode-map (kbd "C-c C-a")    'clojure-add-ns)
 
 (eval-after-load 'clojure-mode
   '(define-clojure-indent
@@ -203,6 +203,7 @@
      (do-it 'defun)
      (def 'defun)
      (add-parser 'defun)
+     (defhandler 'defun)
      (p/let 'defun)
      (register-hook 'defun)
      (bind 'defun)
@@ -332,6 +333,7 @@
          (outer-path      (concat current-project
                                   (if test-p "src/" "test/test/")))
          (target-file     (concat outer-path rel-filename)))
+    (other-window 1)
     (if (or test-p
             (file-exists-p target-file)
             (find-buffer-visiting target-file))
@@ -341,5 +343,5 @@
         (progn (make-directory dir t)
                (find-file target-file)
                (insert "(ns test." ns
-                       "\n  (:use [" ns " :reload true]"
-                       "\n        (midje sweet)))\n\n"))))))
+                       "\n  (:use (midje sweet)"
+                       "\n        [" ns " :reload true]))\n\n"))))))
