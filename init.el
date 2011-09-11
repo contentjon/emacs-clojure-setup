@@ -189,6 +189,7 @@
 (add-to-list 'load-path (concat conf-dir "midje"))
 (require 'clojure-mode)
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
+(add-to-list 'auto-mode-alist '("\\.cljs$" . clojure-mode))
 (require 'midje-mode)
 (add-hook 'clojure-mode-hook 'midje-mode)
 
@@ -204,6 +205,8 @@
      (redefn 'defun)
      (let-args 'defun)
      (defhandler 'defun)))
+     (fact 'defun)
+     (against-background 'defun)))
 
 (require 'align-cljlet)
 
