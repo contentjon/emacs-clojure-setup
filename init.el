@@ -16,6 +16,7 @@
 ;(setq-default transient-mark-mode t)
 (setq show-trailing-whitespace t)
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
+(remove-hook 'text-mode-hook 'turn-on-flyspell)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (setq-default fill-column 72)
 (setq-default indent-tabs-mode nil)
@@ -149,6 +150,9 @@
 ;; Key Definitions ;;
 ;;;;;;;;;;;;;;;;;;;;;
 
+(global-set-key (kbd "C-S-<right>") 'other-window)
+(global-set-key (kbd "C-S-<left>") (lambda () (interactive) (other-window -1)))
+
 (global-set-key (kbd "C-+") 'text-scale-adjust)
 (global-set-key (kbd "C--") 'text-scale-adjust)
 (global-set-key (kbd "C-0") 'text-scale-adjust)
@@ -156,6 +160,7 @@
 (global-set-key [f2] 'fullscreen)
 
 (global-set-key [f5]   (lambda()(interactive)(slime-connect "127.0.0.1" 4005)))
+(global-set-key [f6]   'clojurescript-repl)
 
 (global-set-key [f8]   (lambda()(interactive)(find-file (concat conf-dir "init.el"))))
 (global-set-key [f9]   'start-kbd-macro)
@@ -187,28 +192,18 @@
 (require 'midje-mode)
 (add-hook 'clojure-mode-hook 'midje-mode)
 
-(key-chord-define clojure-mode-map "89" 'align-cljlet)
-(key-chord-define clojure-mode-map "öä" 'clojure-string->keyword)
-(define-key clojure-mode-map (kbd "C-c t")      'clojure-goto-test-or-back)
-(define-key clojure-mode-map (kbd "C-c C-a")    'clojure-add-ns)
+(key-chord-define clojure-mode-map "89"      'align-cljlet)
+(key-chord-define clojure-mode-map "öä"      'clojure-set-ns-goto-repl)
+(define-key clojure-mode-map (kbd "C-c t")   'clojure-goto-test-or-back)
+(define-key clojure-mode-map (kbd "C-c C-a") 'clojure-add-ns)
 
 (eval-after-load 'clojure-mode
   '(define-clojure-indent
-     (describe 'defun)
-     (testing 'defun)
-     (given 'defun)
-     (using 'defun)
-     (with 'defun)
-     (it 'defun)
-     (do-it 'defun)
      (def 'defun)
-     (add-parser 'defun)
-     (defhandler 'defun)
-     (p/let 'defun)
-     (register-hook 'defun)
-     (bind 'defun)
-     (where 'defun)
-     (with 'defin)))
+     (redef 'defun)
+     (redefn 'defun)
+     (let-args 'defun)
+     (defhandler 'defun)))
 
 (require 'align-cljlet)
 
@@ -345,3 +340,21 @@
                (insert "(ns test." ns
                        "\n  (:use (midje sweet)"
                        "\n        [" ns " :reload true]))\n\n"))))))
+
+(defun clojure-set-ns-goto-repl ()
+  (interactive)
+  (slime-repl-set-package (slime-find-buffer-package))
+  (slime-switch-to-output-buffer))
+
+;;;;;;;;;;;;;;;;;;;
+;; ClojureScript ;;
+;;;;;;;;;;;;;;;;;;;
+
+(defun clojurescript-repl ()
+  (interactive)
+  (let ((cljs-home (getenv "CLOJURESCRIPT_HOME")))
+    (run-lisp (concat cljs-home "/script/repl"))
+    (lisp-eval-string "(require '[cljs.repl :as repl])
+                       (require '[cljs.repl.browser :as browser])
+                       (def env (browser/repl-env))
+                       (repl/repl env)")))
