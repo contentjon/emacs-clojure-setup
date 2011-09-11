@@ -184,6 +184,7 @@
 (add-to-list 'load-path (concat conf-dir "midje"))
 (require 'clojure-mode)
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
+(add-to-list 'auto-mode-alist '("\\.cljs$" . clojure-mode))
 (require 'midje-mode)
 (add-hook 'clojure-mode-hook 'midje-mode)
 
@@ -194,6 +195,8 @@
 
 (eval-after-load 'clojure-mode
   '(define-clojure-indent
+     (fact 'defun)
+     (against-background 'defun)
      (describe 'defun)
      (testing 'defun)
      (given 'defun)
@@ -208,7 +211,7 @@
      (register-hook 'defun)
      (bind 'defun)
      (where 'defun)
-     (with 'defin)))
+     (with 'defun)))
 
 (require 'align-cljlet)
 
