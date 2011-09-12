@@ -204,9 +204,9 @@
      (redef 'defun)
      (redefn 'defun)
      (let-args 'defun)
-     (defhandler 'defun)))
      (fact 'defun)
-     (against-background 'defun)))
+     (against-background 'defun)
+     (defhandler 'defun)))
 
 (require 'align-cljlet)
 
@@ -357,6 +357,7 @@
   (interactive)
   (let ((cljs-home (getenv "CLOJURESCRIPT_HOME")))
     (run-lisp (concat cljs-home "/script/repl"))
+    (paredit-mode +1)
     (lisp-eval-string "(require '[cljs.repl :as repl])
                        (require '[cljs.repl.browser :as browser])
                        (def env (browser/repl-env))
