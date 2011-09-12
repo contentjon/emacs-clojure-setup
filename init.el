@@ -13,7 +13,6 @@
 (desktop-save-mode 1)
 (setq kill-whole-line t)
 (show-paren-mode t)
-;(setq-default transient-mark-mode t)
 (setq show-trailing-whitespace t)
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 (remove-hook 'text-mode-hook 'turn-on-flyspell)
@@ -52,26 +51,6 @@
   (let ((dir (concat development-dir "/" name)) )
     (desktop-change-dir dir)
     (cd dir)))
-
-(defun libs ()
-  (interactive)
-  (project "libs"))
-
-(defun panda ()
-  (interactive)
-  (project "gopanda"))
-
-(defun go ()
-  (interactive)
-  (project "gostrategy"))
-
-(defun sandbox ()
-  (interactive)
-  (project "sandbox"))
-
-(defun bet ()
-  (interactive)
-  (project "bet"))
 
 ;;;;;;;;;;;;;;
 ;; cua-mode ;;
@@ -149,8 +128,8 @@
 ;; Key Definitions ;;
 ;;;;;;;;;;;;;;;;;;;;;
 
-(global-set-key (kbd "C-S-<right>") 'other-window)
-(global-set-key (kbd "C-S-<left>") (lambda () (interactive) (other-window -1)))
+;; (global-set-key (kbd "C-S-<right>") 'other-window)
+;; (global-set-key (kbd "C-S-<left>") (lambda () (interactive) (other-window -1)))
 
 (global-set-key (kbd "C-+") 'text-scale-adjust)
 (global-set-key (kbd "C--") 'text-scale-adjust)
@@ -220,37 +199,7 @@
 (add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode +1)))
 (add-hook 'clojure-mode-hook          (lambda () (paredit-mode +1)))
 
-(require 'durendal)
-
-(durendal-enable)
-
-;; (require 'elein)
-
 (custom-set-variables '(slime-net-coding-system (quote utf-8-unix)))
-
-;;;;;;;;;;;;;;;;
-;; Processing ;;
-;;;;;;;;;;;;;;;;
-
-;; (autoload 'processing-mode "processing-mode" "Processing mode" t)
-;; (add-to-list 'auto-mode-alist '("\\.pde$" . processing-mode))
-;; (setq processing-location "/Applications/Processing.app/")
-
-;;;;;;;;;;;;
-;; AucTex ;;
-;;;;;;;;;;;;
-
-(add-hook 'LaTeX-mode-hook
-          (lambda ()
-            (ispell-change-dictionary "deutsch")
-            (setq TeX-open-quote "\"`")
-            (setq TeX-close-quote "\"'")))
-
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq-default TeX-master nil)
-(setq font-latex-quotes 'german)
-;(add-hook 'LaTeX-mode-hook 'flyspell-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Working with .emacs ;;
