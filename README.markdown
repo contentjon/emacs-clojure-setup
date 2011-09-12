@@ -7,6 +7,7 @@
 - install color-theme, clojure-mode, slime, slime-repl, durendal and whatever you like
 - cd .emacs.d
 - git clone git://github.com/contentjon/emacs-clojure-setup.git <your-unix-username>
+  (or use git@... url if you are a contentjon member)
 - cd <your-username>; cp local-settings.el.example local-settings.el
 - edit local-settings.el to have development-dir point to your root
   directory for your hacking. This file can also be used for all elisp
