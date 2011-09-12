@@ -46,8 +46,7 @@
 ;; Desktop Projects ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-;; defines development-dir
-(load "local-settings")
+(setq development-dir nil)
 
 (defun project (name)
   (let ((dir (concat development-dir "/" name)) )
@@ -68,11 +67,11 @@
 
 (defun sandbox ()
   (interactive)
-  (project "~/dev/sandbox"))
+  (project "sandbox"))
 
 (defun bet ()
   (interactive)
-  (project "~/dev/bet"))
+  (project "bet"))
 
 ;;;;;;;;;;;;;;
 ;; cua-mode ;;
@@ -362,3 +361,9 @@
                        (require '[cljs.repl.browser :as browser])
                        (def env (browser/repl-env))
                        (repl/repl env)")))
+
+;;;;;;;;;;;;;;;;;;;
+;; user settings ;;
+;;;;;;;;;;;;;;;;;;;
+
+(load "local-settings")
